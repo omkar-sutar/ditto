@@ -86,6 +86,12 @@ dist: cross-build
 	cd bin/windows_386 && zip -r ../../dist/$(BINARY_NAME_WINDOWS)_$(VERSION)_windows_386.zip $(BINARY_NAME_WINDOWS)
 	@echo "Distribution packages created in dist/ directory"
 
+# Create a single zip file with all binaries
+.PHONY: releases
+releases: cross-build
+	zip -r releases.zip bin/
+	@echo "All builds zipped into releases.zip"
+
 # Help information
 .PHONY: help
 help:
@@ -98,4 +104,5 @@ help:
 	@echo "  windows     - Build for Windows (amd64, 386)"
 	@echo "  cross-build - Build for all supported platforms"
 	@echo "  dist        - Create distribution packages"
+	@echo "  releases    - Create a single zip file with all binaries"
 	@echo "  help        - Show this help message"
