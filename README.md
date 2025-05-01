@@ -33,7 +33,7 @@ make cross-build
 
 ### Pre-built Binaries
 
-Download the appropriate binary for your platform from the [Releases](https://github.com/yourusername/ditto/releases) page.
+Download the appropriate binary for your platform from the [Releases](https://github.com/omkar-sutar/ditto/releases/) page.
 
 ## Usage
 
