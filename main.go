@@ -8,32 +8,61 @@ import (
 
 var destinationPath string
 var opMode string
+var address string
 
 func main() {
-
-	// Get arg0 as destination path
+	// Check for minimum required arguments
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run main.go <destination_path>")
+		printUsage()
 		os.Exit(1)
 	}
 
 	opMode = os.Args[1]
+
 	if opMode == OperationModeServer {
-		if len(os.Args) < 3 {
-			fmt.Println("Us.3age: go run main.go server <destination_path>")
+		// Server mode: go run main.go server [port] [destination_path]
+		if len(os.Args) < 4 {
+			fmt.Println("Usage: go run main.go server [port] [destination_path]")
 			os.Exit(1)
 		}
-		destinationPath = os.Args[2]
+		address = ":" + os.Args[2] // Format port as ":8080"
+		destinationPath = os.Args[3]
+		if _, err := os.Stat(destinationPath); os.IsNotExist(err) {
+			// Create destination path if it doesn't exist
+			err := os.MkdirAll(destinationPath, os.ModePerm)
+			if err != nil {
+				fmt.Printf("Error creating destination path: %v\n", err)
+				os.Exit(1)
+			}
+		}
 		StartServer()
-	}
-	// Client mode
-	filePaths := os.Args[2:]
-	if len(filePaths) == 0 {
-		fmt.Println("Usage: go run main.go client <file_path_1> <file_path_2> ...")
+	} else if opMode == OperationModeClient {
+		// Client mode: go run main.go client [address:port] [file_path_1] [file_path_2] ...
+		if len(os.Args) < 4 {
+			fmt.Println("Usage: go run main.go client [address:port] [file_path_1] [file_path_2] ...")
+			os.Exit(1)
+		}
+		address = os.Args[2]
+		filePaths := os.Args[3:]
+
+		if len(filePaths) == 0 {
+			fmt.Println("No files specified for sending")
+			os.Exit(1)
+		}
+
+		if strings.Contains(filePaths[0], "*") {
+			fmt.Printf("Warning: unmatched pattern '%s'\n", filePaths[0])
+		}
+
+		SendFiles(filePaths)
+	} else {
+		printUsage()
 		os.Exit(1)
 	}
-	if strings.Contains(filePaths[0], "*") {
-		fmt.Printf("Warning: unmatched pattern '%s'\n", filePaths[0])
-	}
-	SendFiles(filePaths)
+}
+
+func printUsage() {
+	fmt.Println("Usage:")
+	fmt.Println("  Server mode: go run main.go server [port] [destination_path]")
+	fmt.Println("  Client mode: go run main.go client [address:port] [file_path_1] [file_path_2] ...")
 }

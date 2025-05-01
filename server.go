@@ -10,12 +10,12 @@ import (
 )
 
 func StartServer() {
-	ln, err := net.Listen("tcp", ":8080")
+	ln, err := net.Listen("tcp", address)
 	if err != nil {
 		panic(err)
 	}
 	defer ln.Close()
-	fmt.Println("Server listening on port 8080...")
+	fmt.Printf("Server listening on %s...\n", address)
 
 	for {
 		conn, err := ln.Accept()
@@ -29,19 +29,24 @@ func StartServer() {
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
-	buffer := make([]byte, 1)
-
-	n, err := conn.Read(buffer)
-	if err != nil {
-		fmt.Println("Read error:", err)
-		return
-	}
-	if n == 0 || buffer[0] != ConnectionStart {
-		fmt.Println("Invalid start byte, closing connection")
-		return
-	}
 
 	for {
+
+		buffer := make([]byte, 1)
+		n, err := conn.Read(buffer)
+		if err != nil {
+			fmt.Println("Read error:", err)
+			return
+		}
+		if n == 0 || (buffer[0] != ConnectionStart && buffer[0] != ConnectionEnd) {
+			fmt.Println("Invalid control byte, closing connection")
+			return
+		}
+		if buffer[0] == ConnectionEnd {
+			fmt.Println("Connection end byte received, closing connection")
+			return
+		}
+		fmt.Println("Connection start byte received, preparing to receive file")
 
 		//1. Read file name
 		fileNameBytes, err := ReadData(conn)
@@ -99,17 +104,6 @@ func handleConnection(conn net.Conn) {
 		}
 		file.Close()
 		fmt.Printf("File %s downloaded successfully\n", fileName)
-
-		stopByte := make([]byte, 1)
-		n, err = conn.Read(stopByte)
-		if err != nil || n != 1 {
-			fmt.Println("Read error:", err)
-			return
-		}
-		if stopByte[0] == ConnectionEnd {
-			fmt.Println("Connection end byte received, closing connection")
-			return
-		}
 	}
 }
 
