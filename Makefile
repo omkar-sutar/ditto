@@ -20,12 +20,6 @@ GOMOD=$(GOCMD) mod
 # Build flags
 LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.Build=$(BUILD) -X main.BuildDate=$(BUILD_DATE)"
 
-# Different platforms
-PLATFORMS=linux windows
-
-# Source files
-SRC_FILES=main.go client.go server.go control.go
-
 # Default target
 .PHONY: all
 all: build
@@ -33,7 +27,7 @@ all: build
 # Build for current platform
 .PHONY: build
 build:
-	$(GOBUILD) $(LDFLAGS) -o bin/$(BINARY_NAME_LINUX) $(SRC_FILES)
+	$(GOBUILD) $(LDFLAGS) -o bin/$(BINARY_NAME_LINUX) .
 	@echo "Build successful for current platform"
 
 # Clean build files
@@ -67,16 +61,16 @@ cross-build: prepare linux windows
 # Build for Linux
 .PHONY: linux
 linux: prepare
-	GOOS=linux GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o bin/linux_amd64/$(BINARY_NAME_LINUX) $(SRC_FILES)
-	GOOS=linux GOARCH=386 $(GOBUILD) $(LDFLAGS) -o bin/linux_386/$(BINARY_NAME_LINUX) $(SRC_FILES)
-	GOOS=linux GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o bin/linux_arm64/$(BINARY_NAME_LINUX) $(SRC_FILES)
+	GOOS=linux GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o bin/linux_amd64/$(BINARY_NAME_LINUX) .
+	GOOS=linux GOARCH=386 $(GOBUILD) $(LDFLAGS) -o bin/linux_386/$(BINARY_NAME_LINUX) .
+	GOOS=linux GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o bin/linux_arm64/$(BINARY_NAME_LINUX) .
 	@echo "Linux builds completed"
 
 # Build for Windows
 .PHONY: windows
 windows: prepare
-	GOOS=windows GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o bin/windows_amd64/$(BINARY_NAME_WINDOWS) $(SRC_FILES)
-	GOOS=windows GOARCH=386 $(GOBUILD) $(LDFLAGS) -o bin/windows_386/$(BINARY_NAME_WINDOWS) $(SRC_FILES)
+	GOOS=windows GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o bin/windows_amd64/$(BINARY_NAME_WINDOWS) .
+	GOOS=windows GOARCH=386 $(GOBUILD) $(LDFLAGS) -o bin/windows_386/$(BINARY_NAME_WINDOWS) .
 	@echo "Windows builds completed"
 
 # Create distribution packages
