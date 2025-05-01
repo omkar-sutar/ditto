@@ -22,10 +22,10 @@ func main() {
 	if opMode == OperationModeServer {
 		// Server mode: go run main.go server [port] [destination_path]
 		if len(os.Args) < 4 {
-			fmt.Println("Usage: go run main.go server [port] [destination_path]")
+			fmt.Println("Usage: ditto.exe server [address:port] [destination_path]")
 			os.Exit(1)
 		}
-		address = ":" + os.Args[2] // Format port as ":8080"
+		address = os.Args[2] // Format port as ":8080"
 		destinationPath = os.Args[3]
 		if _, err := os.Stat(destinationPath); os.IsNotExist(err) {
 			// Create destination path if it doesn't exist
@@ -39,7 +39,7 @@ func main() {
 	} else if opMode == OperationModeClient {
 		// Client mode: go run main.go client [address:port] [file_path_1] [file_path_2] ...
 		if len(os.Args) < 4 {
-			fmt.Println("Usage: go run main.go client [address:port] [file_path_1] [file_path_2] ...")
+			fmt.Println("Usage: ditto.exe client [address:port] [file_path_1] [file_path_2] ...")
 			os.Exit(1)
 		}
 		address = os.Args[2]
@@ -63,6 +63,8 @@ func main() {
 
 func printUsage() {
 	fmt.Println("Usage:")
-	fmt.Println("  Server mode: go run main.go server [port] [destination_path]")
-	fmt.Println("  Client mode: go run main.go client [address:port] [file_path_1] [file_path_2] ...")
+	fmt.Println("  Server mode: ditto.exe server [port] [destination_path]")
+	fmt.Println("  Client mode: ditto.exe client [address:port] [file_path_1] [file_path_2] ...")
+	fmt.Println("  Example: ditto.exe server 0.0.0.0:8080 /path/to/destination")
+	fmt.Println("  Example: ditto.exe client 127.0.0.1:8080 /path/to/file1.txt /path/to/file2.txt *.jpg")
 }
