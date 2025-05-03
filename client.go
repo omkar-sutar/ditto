@@ -59,7 +59,8 @@ func sendFile(conn net.Conn, filePath string) error {
 	}
 
 	// Send file name
-	err = sendData(conn, []byte(filePath))
+	fileName := filepath.Base(filePath)
+	err = sendData(conn, []byte(fileName))
 	if err != nil {
 		return fmt.Errorf("error sending file name: %v", err)
 	}
